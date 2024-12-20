@@ -1,0 +1,81 @@
+---
+- hosts: all
+  tasks:
+  - name: install apache on ubuntu
+    apt:
+      name: apache2
+      state: latest
+      update_cache: true
+    become: yes
+    when: ansible_os_family == "Debian"
+  - name: install apache on centos
+    yum:
+      name: httpd
+      state: latest
+    become: yes
+    when: ansible_os_family == "RedHat"
+  - name: Install IIS on windows
+    win_feature:
+      name: Web-Server
+      state: present
+    when: ansible_os_family == "Windows"
+
+  - name: start apache service on ubuntu
+    service:
+      name: apache2
+      state: started
+      enabled: true
+    become: yes
+    when: ansible_os_family == "Debian"
+  - name: start apache service on centos
+    service:
+      name: httpd
+      state: started
+      enabled: true
+    become: yes
+    when: ansible_os_family == "RedHat"
+  - name: Start IIS
+    win_service:
+      name: W3SVC
+      state: started
+      start_mode: auto
+    when: ansible_os_family == "Windows"
+
+
+  - name: Copy Index.html file to ubuntu node
+    template:
+      src: /etc/ansible/playbooks/index.html
+      dest: /var/www/html/index.html
+    notify: restart apache2
+    become: yes
+    when: ansible_os_family == "Debian"
+  - name: Copy Index.html file to centos node
+    template:
+      src: /etc/ansible/playbooks/index.html
+      dest: /var/www/html/index.html
+    notify: restart httpd
+    become: yes
+    when: ansible_os_family == "RedHat"
+  - name: Copy Index.html
+    template:
+      src: /etc/ansible/playbooks/index.html
+      dest: c:\inetpub\wwwroot\index.html
+    when: ansible_os_family == "Windows"
+
+  handlers:
+    - name: restart apache2
+      service:
+        name: apache2
+        state: restarted
+      become: yes
+    - name: restart httpd
+      service:
+        name: httpd
+        state: restarted
+      become: yes
+    - name: restart IIS
+      win_service:
+        name: W3SVC
+        state: restarted
+
+

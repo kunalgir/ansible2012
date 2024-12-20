@@ -1,0 +1,7 @@
+---
+- hosts: ubuntu
+  tasks:
+  - name: Craete sensitive file
+    copy:
+      content: "This is a sensitive file"
+      dest: "/home/ansible/sensitive.txt"

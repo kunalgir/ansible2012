@@ -1,0 +1,14 @@
+---
+- hosts: ubuntu
+  tasks:
+    - name: run a command
+      ignore_errors: yes
+      command:
+        ls -l test.txt
+      register: log
+    - name: Print Standart Output
+      debug:
+        msg: Standard Output is "{{log.stdout}}"
+    - name: Print Standart Error
+      debug:
+        msg: Standard Error is  "{{log.stderr}}"

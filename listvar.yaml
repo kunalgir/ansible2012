@@ -1,0 +1,11 @@
+---
+- hosts: ubuntu
+  vars:
+    teams: [india, australia, england, newzealand]
+  tasks:
+  - name: print team names
+    debug:
+      msg: "{{ item }}" 
+    with_items:
+    - "{{ teams }}"
+
